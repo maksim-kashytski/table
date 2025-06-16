@@ -1,0 +1,15 @@
+.table-header-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expanded-header {
+  border-radius: 10px;
+  background-color: #fcba03c0 !important;
+}
+
+.expanded-cell {
+  filter: contrast(0.95);
+}
