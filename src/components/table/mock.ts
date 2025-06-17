@@ -1,7 +1,7 @@
 export const data = [
   {
     key: "1",
-    name: "1 АКТИВ",
+    name: "АКТИВ",
     currencies: [
       {
         group: "USD",
@@ -143,7 +143,7 @@ export const data = [
     children: [
       {
         key: "1.1",
-        name: "1.1 Денежные средства",
+        name: "Денежные средства",
         currencies: [
           {
             group: "USD",
@@ -251,7 +251,7 @@ export const data = [
       },
       {
         key: "1.2",
-        name: "1.2 К/счёт в НБРБ",
+        name: "К/счёт в НБРБ",
         currencies: [
           {
             group: "USD",
@@ -359,7 +359,7 @@ export const data = [
       },
       {
         key: "1.3",
-        name: "1.3 Средства в НБРБ",
+        name: "Средства в НБРБ",
         currencies: [
           {
             group: "USD",
@@ -467,7 +467,7 @@ export const data = [
         children: [
           {
             key: "1.3.1",
-            name: "1.3.1 Денежные средства",
+            name: "Денежные средства",
             currencies: [
               {
                 group: "USD",
@@ -577,7 +577,7 @@ export const data = [
       },
       {
         key: "1.4",
-        name: "1.4 Средства в банках",
+        name: "Средства в банках",
         currencies: [
           {
             group: "USD",
@@ -685,7 +685,7 @@ export const data = [
       },
       {
         key: "1.5",
-        name: "1.5 Кредиты ЮЛ",
+        name: "Кредиты ЮЛ",
         currencies: [
           {
             group: "USD",
@@ -793,7 +793,7 @@ export const data = [
       },
       {
         key: "1.6",
-        name: "1.6 Квази",
+        name: "Квази",
         currencies: [
           {
             group: "USD",
@@ -901,7 +901,7 @@ export const data = [
       },
       {
         key: "1.7",
-        name: "1.7 Кредиты ФЛ",
+        name: "Кредиты ФЛ",
         currencies: [
           {
             group: "USD",
@@ -1009,7 +1009,7 @@ export const data = [
       },
       {
         key: "1.8",
-        name: "1.8 Ценные бумаги",
+        name: "Ценные бумаги",
         currencies: [
           {
             group: "USD",
@@ -1117,7 +1117,7 @@ export const data = [
       },
       {
         key: "1.9",
-        name: "1.9 Валютная позиция",
+        name: "Валютная позиция",
         currencies: [
           {
             group: "USD",
@@ -1225,7 +1225,7 @@ export const data = [
       },
       {
         key: "1.10",
-        name: "1.10 Прочие",
+        name: "Прочие",
         currencies: [
           {
             group: "USD",
@@ -1335,7 +1335,7 @@ export const data = [
   },
   {
     key: "2",
-    name: "2 ПАССИВ",
+    name: "ПАССИВ",
     currencies: [
       {
         group: "USD",
@@ -1443,7 +1443,7 @@ export const data = [
     children: [
       {
         key: "2.1",
-        name: "2.1 Средства банков",
+        name: "Средства банков",
         currencies: [
           {
             group: "USD",
@@ -1551,7 +1551,7 @@ export const data = [
       },
       {
         key: "2.2",
-        name: "2.2 Средства НБРБ",
+        name: "Средства НБРБ",
         currencies: [
           {
             group: "USD",

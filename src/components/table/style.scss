@@ -13,3 +13,22 @@
 .expanded-cell {
   filter: contrast(0.95);
 }
+
+/* Для dnd-kit drag preview поверх всех элементов */
+.dnd-kit-drag-overlay {
+  z-index: 99999 !important;
+  pointer-events: none;
+}
+
+/* Чтобы drag preview не обрезался таблицей */
+.ant-table,
+.ant-table-container {
+  overflow: visible !important;
+}
+
+.ant-table-fixed,
+.ant-table-fixed-left,
+.ant-table-fixed-right {
+  overflow: visible !important;
+  z-index: 10;
+}

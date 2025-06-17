@@ -1,7 +1,6 @@
 import React from "react";
 import { Table } from "antd";
 import { data } from "./mock";
-import { GroupToggleButton } from "./group-toggle-button/group-toggle-button";
 import { GroupFilterButtons } from "./group-filter-buttons/group-filter-buttons";
 import {
   saveGroupFilterState,
@@ -11,86 +10,12 @@ import {
   saveGroupExpandedState,
   loadGroupExpandedState,
 } from "./services/group-filter-storage";
+import { generateColumns } from "./utils";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 
 import "antd/dist/reset.css";
 import "./style.scss";
-
-// Генерация columns динамически на основе структуры data
-const generateColumns = (
-  data: any[],
-  expandedGroups: Record<string, boolean>,
-  toggleGroup: (group: string) => void,
-) => {
-  if (!data || data.length === 0) return [];
-  const currencies = data[0].currencies;
-  if (!currencies)
-    return [{ title: "СТАТЬЯ", dataIndex: "name", key: "name" }];
-
-  // Первая колонка — наименование
-  const columns: any[] = [
-    {
-      title: "СТАТЬЯ",
-      dataIndex: "name",
-      key: "name",
-      fixed: "left",
-      width: 200,
-    },
-  ];
-
-  currencies.forEach((currency: any) => {
-    currency.parts.forEach((part: any) => {
-      // Показываем только isPrimary если группа закрыта
-      if (!expandedGroups[currency.group] && !part.isPrimary) return;
-
-      columns.push({
-        title: (
-          <span className="table-header-title">
-            {part.title}
-            {part.isPrimary && (
-              <GroupToggleButton
-                expanded={!!expandedGroups[currency.group]}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleGroup(currency.group);
-                }}
-              />
-            )}
-          </span>
-        ),
-        align: "center",
-        className:
-          expandedGroups[currency.group] && !part.isPrimary
-            ? "expanded-header"
-            : undefined,
-        children: part.columns.map((col: any) => ({
-          title: col.title,
-          dataIndex: [currency.group, part.title, col.title].join("__"),
-          key: [currency.group, part.title, col.title].join("__"),
-          align: typeof col.value === "number" ? "right" : "left",
-          width: 120,
-          className:
-            expandedGroups[currency.group] && !part.isPrimary
-              ? "expanded-cell"
-              : undefined,
-          render: (_: any, record: any) => {
-            const curr = record.currencies?.find(
-              (c: any) => c.group === currency.group,
-            );
-            const partObj = curr?.parts?.find(
-              (p: any) => p.title === part.title,
-            );
-            const colObj = partObj?.columns?.find(
-              (c: any) => c.title === col.title,
-            );
-            return colObj ? colObj.value : null;
-          },
-        })),
-      });
-    });
-  });
-
-  return columns;
-};
 
 const getAllGroups = (data: any[]): string[] => {
   const groups = new Set<string>();
@@ -119,6 +44,25 @@ const SimpleTable: React.FC = () => {
   const [groupOrder, setGroupOrder] = React.useState<string[]>(() =>
     loadGroupOrder(allGroups),
   );
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
+
+  // DnD обработчик для колонок (групп)
+  const handleGroupColumnDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active?.id && over?.id && active.id !== over.id) {
+      const oldIndex = groupOrder.indexOf(active.id);
+      const newIndex = groupOrder.indexOf(over.id);
+      setGroupOrder((prev) => arrayMove(prev, oldIndex, newIndex));
+    }
+  };
 
   // Сохраняем фильтр в localStorage при изменении
   React.useEffect(() => {
@@ -189,8 +133,8 @@ const SimpleTable: React.FC = () => {
   const orderedColumns = React.useMemo(() => {
     // Передаём groupOrder в generateColumns через filteredData
     // generateColumns уже использует порядок currencies в data, поэтому сортируем их выше
-    return generateColumns(filteredData, expandedGroups, toggleGroup);
-  }, [expandedGroups, filteredData]);
+    return generateColumns(filteredData, expandedGroups, toggleGroup, groupOrder, true);
+  }, [expandedGroups, filteredData, groupOrder]);
 
   // Кнопки в порядке groupOrder
   const orderedGroups = groupOrder;
@@ -202,6 +146,7 @@ const SimpleTable: React.FC = () => {
         flexDirection: "column",
         alignItems: "flex-start",
         gap: 8,
+        width: "100%",
       }}
     >
       <GroupFilterButtons
@@ -210,14 +155,22 @@ const SimpleTable: React.FC = () => {
         onToggle={handleGroupFilter}
         onDragEnd={handleGroupDragEnd}
       />
-      <Table
-        columns={orderedColumns}
-        dataSource={filteredData}
-        pagination={false}
-        bordered
-        scroll={{ x: 1200 }}
-        size="middle"
-      />
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleGroupColumnDragEnd}
+      >
+        <SortableContext items={orderedGroups} strategy={horizontalListSortingStrategy}>
+          <Table
+            columns={orderedColumns}
+            dataSource={filteredData}
+            pagination={false}
+            bordered
+            size="middle"
+            scroll={{ x: 1200 }}
+          />
+        </SortableContext>
+      </DndContext>
     </div>
   );
 };
