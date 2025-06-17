@@ -1,35 +1,37 @@
 {
-  "name": "table-test",
-  "version": "0.1.0",
+  "name": "react-table",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "homepage": "https://maksim-kashytski.github.io/table/",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
-    "@dnd-kit/core": "^6.3.1",
-    "@dnd-kit/modifiers": "^9.0.0",
-    "@dnd-kit/sortable": "^10.0.0",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^7.1.1",
-    "@mui/material": "^7.1.1",
-    "antd": "^5.26.0",
-    "next": "15.3.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "sass": "^1.89.2"
+    "antd": "^5.26.1",
+    "gh-pages": "^6.3.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.2"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.3",
-    "typescript": "^5"
+    "@eslint/js": "^9.25.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "sass-embedded": "^1.89.2",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.30.1",
+    "vite": "^6.3.5"
   }
 }

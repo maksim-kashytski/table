@@ -1,32 +1,38 @@
-'use client'
+import React from "react";
+import { Table } from "antd";
+import { data } from "./mock";
+import { GroupToggleButton } from "./group-toggle-button/group-toggle-button";
+import { GroupFilterButtons } from "./group-filter-buttons/group-filter-buttons";
+import {
+  saveGroupFilterState,
+  loadGroupFilterState,
+  saveGroupOrder,
+  loadGroupOrder,
+  saveGroupExpandedState,
+  loadGroupExpandedState,
+} from "./services/group-filter-storage";
 
-import React from 'react';
-import { Table, Space, Button } from 'antd';
-import { data } from './mock';
-import { GroupToggleButton } from './group-toggle-button/group-toggle-button';
-import { GroupFilterButtons } from './group-filter-buttons/group-filter-buttons';
-import { saveGroupFilterState, loadGroupFilterState, saveGroupOrder, loadGroupOrder } from './services/group-filter-storage';
-
-import 'antd/dist/reset.css';
-import './style.scss';
+import "antd/dist/reset.css";
+import "./style.scss";
 
 // Генерация columns динамически на основе структуры data
 const generateColumns = (
   data: any[],
   expandedGroups: Record<string, boolean>,
-  toggleGroup: (group: string) => void
+  toggleGroup: (group: string) => void,
 ) => {
   if (!data || data.length === 0) return [];
   const currencies = data[0].currencies;
-  if (!currencies) return [{ title: 'Наименование', dataIndex: 'name', key: 'name' }];
+  if (!currencies)
+    return [{ title: "СТАТЬЯ", dataIndex: "name", key: "name" }];
 
   // Первая колонка — наименование
   const columns: any[] = [
     {
-      title: 'Наименование',
-      dataIndex: 'name',
-      key: 'name',
-      fixed: 'left',
+      title: "СТАТЬЯ",
+      dataIndex: "name",
+      key: "name",
+      fixed: "left",
       width: 200,
     },
   ];
@@ -43,7 +49,7 @@ const generateColumns = (
             {part.isPrimary && (
               <GroupToggleButton
                 expanded={!!expandedGroups[currency.group]}
-                onClick={e => {
+                onClick={(e) => {
                   e.stopPropagation();
                   toggleGroup(currency.group);
                 }}
@@ -51,22 +57,34 @@ const generateColumns = (
             )}
           </span>
         ),
-        align: 'center',
-        className: expandedGroups[currency.group] && !part.isPrimary ? 'expanded-header' : undefined,
+        align: "center",
+        className:
+          expandedGroups[currency.group] && !part.isPrimary
+            ? "expanded-header"
+            : undefined,
         children: part.columns.map((col: any) => ({
           title: col.title,
-          dataIndex: [currency.group, part.title, col.title].join('__'),
-          key: [currency.group, part.title, col.title].join('__'),
-          align: typeof col.value === 'number' ? 'right' : 'left',
+          dataIndex: [currency.group, part.title, col.title].join("__"),
+          key: [currency.group, part.title, col.title].join("__"),
+          align: typeof col.value === "number" ? "right" : "left",
           width: 120,
-          className: expandedGroups[currency.group] && !part.isPrimary ? 'expanded-cell' : undefined,
+          className:
+            expandedGroups[currency.group] && !part.isPrimary
+              ? "expanded-cell"
+              : undefined,
           render: (_: any, record: any) => {
-            const curr = record.currencies?.find((c: any) => c.group === currency.group);
-            const partObj = curr?.parts?.find((p: any) => p.title === part.title);
-            const colObj = partObj?.columns?.find((c: any) => c.title === col.title);
+            const curr = record.currencies?.find(
+              (c: any) => c.group === currency.group,
+            );
+            const partObj = curr?.parts?.find(
+              (p: any) => p.title === part.title,
+            );
+            const colObj = partObj?.columns?.find(
+              (c: any) => c.title === col.title,
+            );
             return colObj ? colObj.value : null;
           },
-        }))
+        })),
       });
     });
   });
@@ -77,7 +95,7 @@ const generateColumns = (
 const getAllGroups = (data: any[]): string[] => {
   const groups = new Set<string>();
   const traverse = (items: any[]) => {
-    items.forEach(item => {
+    items.forEach((item) => {
       if (item.currencies) {
         item.currencies.forEach((c: any) => groups.add(c.group));
       }
@@ -92,11 +110,15 @@ const dataSource = data;
 
 const SimpleTable: React.FC = () => {
   const allGroups = React.useMemo(() => getAllGroups(data), []);
-  const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({});
-  const [activeGroups, setActiveGroups] = React.useState<Record<string, boolean>>(
-    () => loadGroupFilterState(allGroups)
+  const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>(
+    () => loadGroupExpandedState(allGroups)
   );
-  const [groupOrder, setGroupOrder] = React.useState<string[]>(() => loadGroupOrder(allGroups));
+  const [activeGroups, setActiveGroups] = React.useState<
+    Record<string, boolean>
+  >(() => loadGroupFilterState(allGroups));
+  const [groupOrder, setGroupOrder] = React.useState<string[]>(() =>
+    loadGroupOrder(allGroups),
+  );
 
   // Сохраняем фильтр в localStorage при изменении
   React.useEffect(() => {
@@ -108,15 +130,20 @@ const SimpleTable: React.FC = () => {
     saveGroupOrder(groupOrder);
   }, [groupOrder]);
 
+  // Сохраняем состояние раскрытости групп при изменении
+  React.useEffect(() => {
+    saveGroupExpandedState(expandedGroups);
+  }, [expandedGroups]);
+
   const toggleGroup = (group: string) => {
-    setExpandedGroups(prev => ({
+    setExpandedGroups((prev) => ({
       ...prev,
       [group]: !prev[group],
     }));
   };
 
   const handleGroupFilter = (group: string) => {
-    setActiveGroups(prev => ({
+    setActiveGroups((prev) => ({
       ...prev,
       [group]: !prev[group],
     }));
@@ -124,7 +151,7 @@ const SimpleTable: React.FC = () => {
 
   // Drag & drop reorder handler
   const handleGroupDragEnd = (from: number, to: number) => {
-    setGroupOrder(prev => {
+    setGroupOrder((prev) => {
       const updated = [...prev];
       const [removed] = updated.splice(from, 1);
       updated.splice(to, 0, removed);
@@ -134,12 +161,17 @@ const SimpleTable: React.FC = () => {
 
   // Фильтруем dataSource по активным группам
   const filterData = (items: any[]): any[] => {
-    return items.map(item => {
+    return items.map((item) => {
       let filtered = { ...item };
       if (filtered.currencies) {
-        filtered.currencies = filtered.currencies.filter((c: any) => activeGroups[c.group]);
+        filtered.currencies = filtered.currencies.filter(
+          (c: any) => activeGroups[c.group],
+        );
         // Сортируем currencies по groupOrder
-        filtered.currencies.sort((a: any, b: any) => groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group));
+        filtered.currencies.sort(
+          (a: any, b: any) =>
+            groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group),
+        );
       }
       if (filtered.children) {
         filtered.children = filterData(filtered.children);
@@ -147,7 +179,11 @@ const SimpleTable: React.FC = () => {
       return filtered;
     });
   };
-  const filteredData = React.useMemo(() => filterData(dataSource), [activeGroups, groupOrder]);
+
+  const filteredData = React.useMemo(
+    () => filterData(dataSource),
+    [activeGroups, groupOrder],
+  );
 
   // Используем groupOrder для порядка колонок
   const orderedColumns = React.useMemo(() => {
@@ -160,7 +196,14 @@ const SimpleTable: React.FC = () => {
   const orderedGroups = groupOrder;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 8,
+      }}
+    >
       <GroupFilterButtons
         groups={orderedGroups}
         activeGroups={activeGroups}

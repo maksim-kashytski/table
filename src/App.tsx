@@ -1,10 +1,12 @@
-import TableReport from "./components/TableReport";
 import SimpleTable from "./components/table/table";
+import "./App.scss";
 
-export default function Home() {
+function App() {
   return (
     <div style={{ padding: 24 }}>
       <SimpleTable />
     </div>
   );
 }
+
+export default App;

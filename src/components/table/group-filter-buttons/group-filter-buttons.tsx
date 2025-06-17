@@ -1,6 +1,6 @@
-import React from 'react';;
-import { Space, Button } from 'antd';
-import './style.scss';
+import React from "react";
+import { Space, Button } from "antd";
+import "./style.scss";
 
 export const GroupFilterButtons: React.FC<{
   groups: string[];
@@ -15,10 +15,10 @@ export const GroupFilterButtons: React.FC<{
       {groups.map((group, idx) => (
         <Button
           key={group}
-          type={activeGroups[group] ? 'primary' : 'default'}
+          type={activeGroups[group] ? "primary" : "default"}
           draggable
           onDragStart={() => setDraggedIdx(idx)}
-          onDragOver={e => e.preventDefault()}
+          onDragOver={(e) => e.preventDefault()}
           onDrop={() => {
             if (draggedIdx !== null && draggedIdx !== idx) {
               onDragEnd(draggedIdx, idx);
@@ -27,7 +27,7 @@ export const GroupFilterButtons: React.FC<{
           }}
           onDragEnd={() => setDraggedIdx(null)}
           onClick={() => onToggle(group)}
-          style={{ opacity: draggedIdx === idx ? 0.5 : 1, cursor: 'grab' }}
+          style={{ opacity: draggedIdx === idx ? 0.5 : 1, cursor: "grab" }}
         >
           {group}
         </Button>
